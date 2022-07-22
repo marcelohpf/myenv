@@ -1,0 +1,10 @@
+[user]
+  name = Marcelo Ferreira
+  email = marcelohpf@gmail.com
+[core]
+  editor = nvim
+[alias]
+  s = status
+  ss = status --short
+  h = log --pretty=format:'%C(auto)%h%Creset %s %C(auto)%d%Creset%n'
+  hist = log --pretty=format:'%C(magenta)%as%Creset %C(auto)%d%Creset %n%C(auto)%h%Creset %s%n'

@@ -1,0 +1,76 @@
+# Manage history
+
+export HISTFILE=~/.zsh_history
+export SAVEHIST=1000000
+export HISTSIZE=1000000
+
+## remove duplicates and share commands between sessions
+## no saving to hist file before closing terminal
+setopt histsavenodups
+setopt sharehistory
+setopt histignoredups
+setopt extendedhistory
+
+# Completion
+
+setopt alwaystoend
+setopt nobeep
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /home/marc/.local/bin/terraform terraform
+
+# Prompt
+
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' formats ' (%F{red}%b%f)'
+
+precmd() {
+  vcs_info
+}
+
+setopt promptsubst
+export PROMPT='%F{8}%m%f [%F{28}%~%f]$vcs_info_msg_0_
+'
+
+# Envs
+
+## Python
+export PYENV_ROOT=$HOME/.local/pyenv
+export PATH="$PYENV_ROOT/bin${PATH:+:${PATH}}"
+eval "$(pyenv init -)"
+
+## Node
+
+export NVM_DIR="$HOME/.local/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+## Golang
+
+export PATH="$HOME/.local/go/bin${PATH:+:${PATH}}"
+
+# Editor
+
+export PATH="$HOME/.local/nvim/bin${PATH:+:${PATH}}"
+export EDITOR="nvim"
+
+# Update
+
+should_commit() {
+  local DOTFILES="$HOME/Projects/myutils"
+  if [ -d "$DOTFILES" ]; then
+    pushd "$DOTFILES" 1> /dev/null
+    git status --short --porcelain
+    git log --pretty=oneline origin/master..HEAD
+    popd 1> /dev/null
+  fi
+}
+
+should_commit
+
+# Plugins
+
+source $HOME/.zsh/plugins/zsh-fzf-history-search/zsh-fzf-history-search.zsh
+source $HOME/.zsh/plugins/zsh-abbrev-alias/abbrev-alias.plugin.zsh
+source $HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
