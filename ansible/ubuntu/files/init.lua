@@ -76,6 +76,15 @@ require('packer').startup(function()
     requires = { {'nvim-lua/plenary.nvim'} }
   }
 
+  -- File explorer
+  use {
+    'kyazdani42/nvim-tree.lua',
+    requires = {
+      'kyazdani42/nvim-web-devicons', -- optional, for file icons
+    },
+    tag = 'nightly' -- optional, updated every week. (see issue #1193)
+  }
+
   -- colorscheme
   use {
     'sainnhe/sonokai',
@@ -182,9 +191,9 @@ local on_attach = function(_, bufnr)
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, bufopts)
   vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
-  vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
-  vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
-  vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
+  vim.keymap.set('n', '<leader>gr', vim.lsp.buf.references, bufopts)
   vim.keymap.set('n', '<space>f', vim.lsp.buf.formatting, bufopts)
 end
 
@@ -236,8 +245,8 @@ luasnip.add_snippets('javascript', {
   }),
 })
 luasnip.add_snippets('typescriptreact', {
-  luasnip.snippet('comp', {
-    luasnip.text_node({"import React from 'react';", "", "", "const "} ),
+  luasnip.snippet('cfn', {
+    luasnip.text_node("const "),
     luasnip.insert_node(1, "Component"),
     luasnip.text_node({" = ({}) => {", "", "  return (", ""}),
     luasnip.insert_node(0),
@@ -247,14 +256,14 @@ luasnip.add_snippets('typescriptreact', {
     end, {1}, {}),
     luasnip.text_node(";")
   }),
-  luasnip.snippet('func', {
+  luasnip.snippet('fn', {
     luasnip.text_node("const "),
     luasnip.insert_node(1, "fn"),
     luasnip.text_node(" = ("),
     luasnip.insert_node(2, "param"),
     luasnip.text_node(") => {"),
     luasnip.insert_node(3),
-    luasnip.text_node({" };", " "}),
+    luasnip.text_node({"};", " "}),
   }),
   luasnip.snippet('jsx', {
     luasnip.text_node("<"),
@@ -272,12 +281,28 @@ luasnip.add_snippets('typescriptreact', {
   luasnip.snippet('html', {
     luasnip.text_node("<"),
     luasnip.insert_node(1, "tag"),
-    luasnip.text_node({">", ""}),
+    luasnip.insert_node(2, " prop"),
+    luasnip.text_node(">"),
     luasnip.insert_node(0),
-    luasnip.text_node({"", "</"}),
+    luasnip.text_node("</"),
     luasnip.function_node(function(args)
       return args[1][1]
     end, {1}, {}),
     luasnip.text_node(">")
   })
+})
+
+vim.api.nvim_set_keymap('n' , '<C-w>e', [[<Cmd>lua require('nvim-tree').open_replacing_current_buffer()<CR>]], { noremap = true })
+
+-- File explorer
+require('nvim-tree').setup({
+  view = {
+    mappings = {
+      list = {
+        { key = '<CR>', action = 'edit_in_place' },
+        { key = '%', action = 'create' },
+        { key = 'R', action = 'rename' }
+      }
+    }
+  }
 })

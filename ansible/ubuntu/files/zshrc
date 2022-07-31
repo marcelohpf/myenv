@@ -61,7 +61,7 @@ should_commit() {
   if [ -d "$DOTFILES" ]; then
     pushd "$DOTFILES" 1> /dev/null
     git status --short --porcelain
-    git log --pretty=oneline origin/master..HEAD
+    git log --pretty=oneline origin/main..HEAD
     popd 1> /dev/null
   fi
 }
