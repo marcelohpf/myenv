@@ -1,37 +1,37 @@
 vim.opt.syntax = "on"
 
-vim.opt.encoding="utf-8"      -- Use default encoding UTF-8 for all files
-vim.opt.expandtab=true           -- Transforms tab \t to spaces
-vim.opt.shiftwidth=2        -- Size of use >> and <<, ctrl-t and ctrl-d (i) to 2
-vim.opt.softtabstop= 2       -- Amount of tabs added (i)
-vim.opt.tabstop=2           -- Size of tab
-vim.opt.shiftround=true          -- When press tab, set the spaces when press tab to round of shiftwidth multiplier
+vim.opt.encoding = "utf-8" -- Use default encoding UTF-8 for all files
+vim.opt.expandtab = true -- Transforms tab \t to spaces
+vim.opt.shiftwidth = 2 -- Size of use >> and <<, ctrl-t and ctrl-d (i) to 2
+vim.opt.softtabstop = 2 -- Amount of tabs added (i)
+vim.opt.tabstop = 2 -- Size of tab
+vim.opt.shiftround = true -- When press tab, set the spaces when press tab to round of shiftwidth multiplier
 
-vim.opt.smartindent=true         -- Automatic indent for some file types
-vim.opt.foldmethod="indent"   -- Use fold for indent
-vim.opt.foldlevelstart= 2    -- Begin with 2 levels of nested folds
-vim.opt.foldenable=false        -- Don't fold the content when open a file
-vim.opt.hlsearch=true            -- Highlight the matchs of a search
-vim.opt.ignorecase=true          -- Ignore case when search
-vim.opt.incsearch=true           -- Move screen to matched search
-vim.opt.showmatch=true           -- Show the match bracket {} () []
+vim.opt.smartindent = true -- Automatic indent for some file types
+vim.opt.foldmethod = "indent" -- Use fold for indent
+vim.opt.foldlevelstart = 2 -- Begin with 2 levels of nested folds
+vim.opt.foldenable = false -- Don't fold the content when open a file
+vim.opt.hlsearch = true -- Highlight the matchs of a search
+vim.opt.ignorecase = true -- Ignore case when search
+vim.opt.incsearch = true -- Move screen to matched search
+vim.opt.showmatch = true -- Show the match bracket {} () []
 
-vim.opt.list=true                      -- Show control chars
-vim.opt.listchars="tab: >,trail:·"  -- Change tab and trails chars
-vim.opt.number = true                    -- Show the numbers of lines
+vim.opt.list = true -- Show control chars
+vim.opt.listchars = "tab: >,trail:·" -- Change tab and trails chars
+vim.opt.number = true -- Show the numbers of lines
 -- vim.opt.cursorline=true                -- Add a bar in current line of cursor
 -- vim.opt.cursorcolumn=true              -- Set cursor column
 
-vim.opt.wildmenu=true                  -- Activate the interactive autocomplete in statusline
-vim.opt.wildmode="longest:full"     -- Complete with best match and show options in statusline
-vim.opt.laststatus= 2              -- Always show the status line in windows
+vim.opt.wildmenu = true -- Activate the interactive autocomplete in statusline
+vim.opt.wildmode = "longest:full" -- Complete with best match and show options in statusline
+vim.opt.laststatus = 2 -- Always show the status line in windows
 
-vim.g.netrw_sizestyle="H"           -- Humanable size of files
-vim.g.netrw_list_hide="^..+"      -- Hide the hidden files
+vim.g.netrw_sizestyle = "H" -- Humanable size of files
+vim.g.netrw_list_hide = "^..+" -- Hide the hidden files
 
-vim.opt.completeopt="menu,menuone,noselect"
+vim.opt.completeopt = "menu,menuone,noselect"
 
-vim.g.mapleader=";"            -- leader key
+vim.g.mapleader = ";" -- leader key
 
 -- Remaps
 vim.api.nvim_set_keymap('n', '<space>', ':nohlsearch<CR>', { noremap = true })
@@ -73,7 +73,7 @@ require('packer').startup(function()
   -- File navigation
   use {
     'nvim-telescope/telescope.nvim',
-    requires = { {'nvim-lua/plenary.nvim'} }
+    requires = { { 'nvim-lua/plenary.nvim' } }
   }
 
   -- File explorer
@@ -96,7 +96,7 @@ vim.cmd("colorscheme sonokai")
 -- clipboard
 vim.g.clipboard = {
   name = 'wsl',
-  copy = { ["+"] = { "clip.exe" }, ["*"] = { "clip.exe" }},
+  copy = { ["+"] = { "clip.exe" }, ["*"] = { "clip.exe" } },
 }
 
 local has_words_before = function()
@@ -160,10 +160,10 @@ treesitter.setup {
 }
 
 require('nvim-lsp-installer').setup({
-  ensure_installed = { 'sumneko_lua', 'efm', 'tsserver', 'cssls', 'html', 'terraformls' }
+  ensure_installed = { 'sumneko_lua', 'efm', 'tsserver', 'cssls', 'html', 'terraformls', 'pyright' }
 })
 
-local opts = { noremap=true, silent=true }
+local opts = { noremap = true, silent = true }
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
 vim.keymap.set('n', '<leader>z', vim.diagnostic.goto_prev, opts)
 vim.keymap.set('n', '<leader>x', vim.diagnostic.goto_next, opts)
@@ -179,7 +179,7 @@ local on_attach = function(_, bufnr)
 
   -- Mappings.
   -- See `:help vim.lsp.*` for documentation on any of the below functions
-  local bufopts = { noremap=true, silent=true, buffer=bufnr }
+  local bufopts = { noremap = true, silent = true, buffer = bufnr }
   vim.keymap.set('n', '<leader>gD', vim.lsp.buf.declaration, bufopts)
   vim.keymap.set('n', '<leader>gd', vim.lsp.buf.definition, bufopts)
   vim.keymap.set('n', '<leader>K', vim.lsp.buf.hover, bufopts)
@@ -194,7 +194,7 @@ local on_attach = function(_, bufnr)
   vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
   vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
   vim.keymap.set('n', '<leader>gr', vim.lsp.buf.references, bufopts)
-  vim.keymap.set('n', '<space>f', vim.lsp.buf.formatting, bufopts)
+  vim.keymap.set('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
 end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -213,12 +213,43 @@ lspconfig['sumneko_lua'].setup {
   }
 }
 -- generic lsp setup
-for _, lang in pairs({'tsserver', 'cssls', 'html', 'terraformls'}) do
+for _, lang in pairs({ 'tsserver', 'cssls', 'html', 'terraformls', 'pyright' }) do
   lspconfig[lang].setup({
     on_attach = on_attach,
     capabilities = capabilities,
   });
 end
+
+lspconfig['efm'].setup({
+  init_options = { documentFormatting = true },
+  settings = {
+    languages = {
+      terraform = {
+        { formatCommand = "terraform fmt" }
+      },
+      python = {
+        { formatCommand = "black --quiet -", formatStdin = true },
+        { formatCommand = "isort --quiet -", formatStdin = true },
+        {
+          lintCommand = "pylint --output-format text --score no --msg-template {path}:{line}:{column}:{C}:{msg} ${INPUT}",
+          lintStdin = false,
+          lintFormats = { "%f:%l:%c:%t:%m" },
+          lintOffsetColumns = 1,
+          lintIgnoreExitCode = true,
+          lintCategoryMap = {
+            I = "H",
+            R = "I",
+            C = "I",
+            W = "W",
+            E = "E",
+            F = "E",
+          }
+        }
+      }
+    },
+    filetypes = { "terraform", "python" }
+  }
+})
 
 -- Telescope
 
@@ -229,7 +260,8 @@ vim.api.nvim_set_keymap('n', '<C-g>', ':Telescope live_grep<CR>', { noremap = tr
 -- Snipets
 luasnip.add_snippets('all', {
   luasnip.snippet("ternary", {
-    luasnip.insert_node(1, "cond"), luasnip.text_node(" ? "), luasnip.insert_node(2, "then"), luasnip.text_node(" : "), luasnip.insert_node(3, "else")}
+    luasnip.insert_node(1, "cond"), luasnip.text_node(" ? "), luasnip.insert_node(2, "then"), luasnip.text_node(" : "),
+    luasnip.insert_node(3, "else") }
   )
 })
 
@@ -241,19 +273,19 @@ luasnip.add_snippets('javascript', {
     luasnip.insert_node(2, "param"),
     luasnip.text_node(") => {"),
     luasnip.insert_node(3),
-    luasnip.text_node({" };", " "}),
+    luasnip.text_node({ " };", " " }),
   }),
 })
 luasnip.add_snippets('typescriptreact', {
   luasnip.snippet('cfn', {
     luasnip.text_node("const "),
     luasnip.insert_node(1, "Component"),
-    luasnip.text_node({" = ({}) => {", "", "  return (", ""}),
+    luasnip.text_node({ " = ({}) => {", "", "  return (", "" }),
     luasnip.insert_node(0),
-    luasnip.text_node({"", "  );", "};", "", "export default ",}),
+    luasnip.text_node({ "", "  );", "};", "", "export default ", }),
     luasnip.function_node(function(args)
       return args[1][1]
-    end, {1}, {}),
+    end, { 1 }, {}),
     luasnip.text_node(";")
   }),
   luasnip.snippet('fn', {
@@ -263,19 +295,19 @@ luasnip.add_snippets('typescriptreact', {
     luasnip.insert_node(2, "param"),
     luasnip.text_node(") => {"),
     luasnip.insert_node(3),
-    luasnip.text_node({"};", " "}),
+    luasnip.text_node({ "};", " " }),
   }),
   luasnip.snippet('jsx', {
     luasnip.text_node("<"),
     luasnip.insert_node(1, "component"),
     luasnip.text_node(" "),
     luasnip.insert_node(2, "props"),
-    luasnip.text_node({">", ""}),
+    luasnip.text_node({ ">", "" }),
     luasnip.insert_node(0),
-    luasnip.text_node({"", "</"}),
+    luasnip.text_node({ "", "</" }),
     luasnip.function_node(function(args)
       return args[1][1]
-    end, {1}, {}),
+    end, { 1 }, {}),
     luasnip.text_node(">")
   }),
   luasnip.snippet('html', {
@@ -287,12 +319,13 @@ luasnip.add_snippets('typescriptreact', {
     luasnip.text_node("</"),
     luasnip.function_node(function(args)
       return args[1][1]
-    end, {1}, {}),
+    end, { 1 }, {}),
     luasnip.text_node(">")
   })
 })
 
-vim.api.nvim_set_keymap('n' , '<C-w>e', [[<Cmd>lua require('nvim-tree').open_replacing_current_buffer()<CR>]], { noremap = true })
+vim.api.nvim_set_keymap('n', '<C-w>e', [[<Cmd>lua require('nvim-tree').open_replacing_current_buffer()<CR>]],
+  { noremap = true })
 
 -- File explorer
 require('nvim-tree').setup({
@@ -301,6 +334,8 @@ require('nvim-tree').setup({
       list = {
         { key = '<CR>', action = 'edit_in_place' },
         { key = '%', action = 'create' },
+        { key = 'd', action = 'create' },
+        { key = 'D', action = 'remove' },
         { key = 'R', action = 'rename' }
       }
     }
