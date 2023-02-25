@@ -1,5 +1,12 @@
 vim.opt.syntax = "on"
 
+function Pretty_folding()
+  local begin = vim.fn.getline(vim.v.foldstart)
+  local bottom = vim.fn.getline(vim.v.foldend):gsub("^%s*(.-)%s*$", "%1")
+  local lines = vim.v.foldend - vim.v.foldstart
+  return begin .. "... " .. lines .. " lines ..." .. bottom
+end
+
 vim.opt.encoding = "utf-8" -- Use default encoding UTF-8 for all files
 vim.opt.expandtab = true -- Transforms tab \t to spaces
 vim.opt.shiftwidth = 2 -- Size of use >> and <<, ctrl-t and ctrl-d (i) to 2
@@ -8,9 +15,11 @@ vim.opt.tabstop = 2 -- Size of tab
 vim.opt.shiftround = true -- When press tab, set the spaces when press tab to round of shiftwidth multiplier
 
 vim.opt.smartindent = true -- Automatic indent for some file types
-vim.opt.foldmethod = "indent" -- Use fold for indent
-vim.opt.foldlevelstart = 2 -- Begin with 2 levels of nested folds
+vim.opt.foldmethod = "expr" -- use treesitter or maybe "indent"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldlevelstart = 99 -- Begin with 2 levels of nested folds
 vim.opt.foldenable = false -- Don't fold the content when open a file
+vim.opt.foldtext = "v:lua.Pretty_folding()"
 vim.opt.hlsearch = true -- Highlight the matchs of a search
 vim.opt.ignorecase = true -- Ignore case when search
 vim.opt.incsearch = true -- Move screen to matched search
@@ -46,7 +55,8 @@ require('packer').startup(function()
 
   -- LSP
   use {
-    'williamboman/nvim-lsp-installer',
+    "williamboman/mason.nvim",
+    "williamboman/mason-lspconfig.nvim",
     'neovim/nvim-lspconfig',
   }
 
@@ -146,7 +156,7 @@ cmp.setup({
 local treesitter = require('nvim-treesitter.configs')
 treesitter.setup {
   -- A list of parser names, or "all"
-  ensure_installed = { "lua", "hcl", "typescript", "javascript", "tsx" },
+  ensure_installed = { "lua", "hcl", "typescript", "javascript", "tsx", "python" },
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
@@ -159,9 +169,20 @@ treesitter.setup {
   },
 }
 
-require('nvim-lsp-installer').setup({
-  ensure_installed = { 'sumneko_lua', 'efm', 'tsserver', 'cssls', 'html', 'terraformls', 'pyright' }
+require("mason").setup({
+    ui = {
+        icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗"
+        }
+    }
 })
+
+require("mason-lspconfig").setup {
+    ensure_installed = { "lua_ls", 'tsserver', 'cssls', 'html', 'terraformls', 'pyright', 'bashls' },
+}
+
 
 local opts = { noremap = true, silent = true }
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
