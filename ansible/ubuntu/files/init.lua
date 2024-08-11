@@ -87,13 +87,12 @@ require('packer').startup(function()
   }
 
   -- File explorer
-  use {
-    'kyazdani42/nvim-tree.lua',
-    requires = {
-      'kyazdani42/nvim-web-devicons', -- optional, for file icons
-    },
-    tag = 'nightly' -- optional, updated every week. (see issue #1193)
-  }
+  -- use {
+  --   'nvim-tree/nvim-tree.lua',
+  --   requires = {
+  --     'nvim-tree/nvim-web-devicons', -- optional, for file icons
+  --   },
+  -- }
 
   -- colorscheme
   use {
@@ -219,10 +218,10 @@ local on_attach = function(_, bufnr)
 end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
+capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
 local lspconfig = require('lspconfig')
-lspconfig['sumneko_lua'].setup {
+lspconfig['lua_ls'].setup {
   on_attach = on_attach,
   capabilities = capabilities,
   settings = {
@@ -343,22 +342,4 @@ luasnip.add_snippets('typescriptreact', {
     end, { 1 }, {}),
     luasnip.text_node(">")
   })
-})
-
-vim.api.nvim_set_keymap('n', '<C-w>e', [[<Cmd>lua require('nvim-tree').open_replacing_current_buffer()<CR>]],
-  { noremap = true })
-
--- File explorer
-require('nvim-tree').setup({
-  view = {
-    mappings = {
-      list = {
-        { key = '<CR>', action = 'edit_in_place' },
-        { key = '%', action = 'create' },
-        { key = 'd', action = 'create' },
-        { key = 'D', action = 'remove' },
-        { key = 'R', action = 'rename' }
-      }
-    }
-  }
 })
