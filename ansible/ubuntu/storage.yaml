@@ -1,0 +1,35 @@
+- hosts: vm
+  gather_facts: no
+  become: true
+  tasks:
+  - name: Ensure contrib repo
+    apt_repository:
+      repo: deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+      filename: deb-contrib
+  - name: Ensure src contrib repo
+    apt_repository:
+      repo: deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+      filename: deb-contrib
+  - name: Kernel version
+    shell: uname -r
+    register: result_uname_r
+  - name: Kernel as a fact
+    set_fact:
+      uname_r: '{{ result_uname_r.stdout }}'
+  - debug:
+     msg: "{{uname_r}}"
+
+  - name: Ensure zfs
+    tags:
+      - install-packages
+    apt:
+      update_cache: true
+      pkg:
+        - nvme-cli
+        - linux-headers-{{ uname_r }}
+        - zfs-dkms
+        - zfsutils-linux
+  - name: Ensure zfs loaded
+    community.general.modprobe:
+      name: zfs
+      state: present

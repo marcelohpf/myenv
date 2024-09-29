@@ -48,6 +48,7 @@ vim.api.nvim_set_keymap('n', '<C-y>', '3<C-Y>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-e>', '3<C-E>', { noremap = true })
 vim.api.nvim_set_keymap('v', '<C-y>', '3<C-Y>', { noremap = true })
 vim.api.nvim_set_keymap('v', '<C-e>', '3<C-E>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<C-w>e', ':Explore<CR>', { noremap = true })
 
 require('packer').startup(function()
   -- Packer manage itself
@@ -179,7 +180,7 @@ require("mason").setup({
 })
 
 require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", 'tsserver', 'cssls', 'html', 'terraformls', 'pyright', 'bashls' },
+    ensure_installed = { "lua_ls", 'tsserver', 'cssls', 'html', 'terraformls', 'pyright', 'bashls', "yamlls" },
 }
 
 
@@ -239,6 +240,19 @@ for _, lang in pairs({ 'tsserver', 'cssls', 'html', 'terraformls', 'pyright' }) 
     capabilities = capabilities,
   });
 end
+
+lspconfig['yamlls'].setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+      yaml = {
+        schemas = {
+          ["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/refs/heads/master/v1.31.1-standalone-strict/all.json"] = "*/*.k8s.yaml",
+          ["https://raw.githubusercontent.com/ansible/ansible-lint/refs/heads/main/src/ansiblelint/schemas/playbook.json"] = "*/*.playbook.yaml",
+        }
+      }
+    }
+}
 
 lspconfig['efm'].setup({
   init_options = { documentFormatting = true },

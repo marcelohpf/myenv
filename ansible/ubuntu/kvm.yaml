@@ -1,0 +1,14 @@
+- hosts: vm
+  gather_facts: no
+  become: true
+  tasks:
+  - name: Ensure libvirt
+    tags:
+      - install-packages
+    apt:
+      update_cache: true
+      install_recommends: false # skip graphical packages
+      pkg:
+        - qemu-system
+        - libvirt-clients
+        - libvirt-daemon-system

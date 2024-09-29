@@ -1,0 +1,11 @@
+- hosts: container
+  gather_facts: no
+  become: true
+  tasks:
+  - name: Ensure podman
+    tags:
+      - install-packages
+    apt:
+      update_cache: true
+      pkg:
+        - podman

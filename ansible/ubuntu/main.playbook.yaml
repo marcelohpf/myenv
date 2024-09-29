@@ -1,0 +1,159 @@
+- hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+  - name: Install apt packages
+    tags:
+      - install-packages
+    apt:
+      update_cache: true
+      pkg:
+        - fzf
+        - ripgrep
+        - zip
+        - unzip
+        - jq
+        - rsync
+        - curl
+- hosts: all
+  gather_facts: false
+  tasks:
+  - name: Install nvm
+    git:
+      repo: https://github.com/nvm-sh/nvm.git
+      dest: /home/mferreira/.local/nvm
+      clone: true
+      update: true
+  - name: Install node
+    shell: source /home/mferreira/.local/nvm/nvm.sh && nvm install lts/iron
+    register: result
+    changed_when:
+      - '"is already installed." not in result.stderr'
+    args:
+      executable: /bin/bash
+  - name: Ensure config dir
+    file:
+      path: /home/mferreira/.config/{{item}}
+      state: directory
+      mode: 0755
+      recurse: true
+    loop:
+      - nvim
+  - name: Ensure local bin dir
+    file:
+      path: /home/mferreira/.local/bin
+      state: directory
+      mode: 0777
+      recurse: true
+  - name: Neovim present
+    shell: nvim --version | awk '/NVIM v/ {print $2}'
+    ignore_errors: true
+    register: nvim_version_check
+    changed_when: false
+  - name: Neovim install
+    when: nvim_version_check.stdout == ""
+    block:
+    - name: Install nvim get binaries
+      ansible.builtin.get_url:
+        url: "https://github.com/neovim/neovim/releases/download/v0.10.1/nvim-linux64.tar.gz"
+        dest: '/tmp/ansible-setup/nvim-linux64.tar.gz'
+        checksum: "sha256:4867de01a17f6083f902f8aa5215b40b0ed3a36e83cc0293de3f11708f1f9793"
+        mode: '0755'
+    - name: Unpack
+      ansible.builtin.unarchive:
+        src: "/tmp/ansible-setup/nvim-linux64.tar.gz"
+        remote_src: true
+        dest: /home/mferreira/.local/
+    - name: Link nvim bin
+      ansible.builtin.file:
+        src: /home/mferreira/.local/nvim-linux64/bin/nvim
+        dest: /home/mferreira/.local/bin/nvim
+        state: link
+  - name: Neovim config
+    file:
+      src: /home/mferreira/myenv/ansible/ubuntu/files/init.lua
+      dest: /home/mferreira/.config/nvim/init.lua
+      owner: mferreira
+      group: mferreira
+      state: link
+  - name: Neovim Packer
+    git:
+      repo: https://github.com/wbthomason/packer.nvim
+      dest: /home/mferreira/.local/share/nvim/site/pack/packer/start/packer.nvim
+      clone: true
+      update: true
+  - name: Neovim Packer Install
+    ansible.builtin.shell:
+      cmd: /home/mferreira/.local/bin/nvim +PackerInstall +qall --headless
+  - name: Tmux config
+    file:
+      src: /home/mferreira/myenv/ansible/ubuntu/files/tmux.conf
+      dest: /home/mferreira/.tmux.conf
+      owner: mferreira
+      group: mferreira
+      state: link
+  - name: Tmux plugins
+    git:
+      repo: https://github.com/tmux-plugins/tpm
+      dest: /home/mferreira/.tmux/plugins/tpm
+      clone: true
+      update: true
+  - name: ZSH config
+    file:
+      src: /home/mferreira/myenv/ansible/ubuntu/files/zshrc
+      dest: /home/mferreira/.zshrc
+      owner: mferreira
+      group: mferreira
+      state: link
+  - name: ZSH auto suggestions
+    git:
+      repo: https://github.com/zsh-users/zsh-autosuggestions
+      dest: /home/mferreira/.zsh/plugins/zsh-autosuggestions
+      clone: true
+      update: true
+  - name: ZSH highlight
+    git:
+      repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+      dest: /home/mferreira/.zsh/plugins/zsh-syntax-highlighting
+      clone: true
+      update: true
+  - name: ZSH abreviation expansion
+    git:
+      repo: https://github.com/momo-lab/zsh-abbrev-alias.git
+      dest: /home/mferreira/.zsh/plugins/zsh-abbrev-alias
+      clone: true
+      update: true
+  - name: ZSH history search
+    git:
+      repo: https://github.com/joshskidmore/zsh-fzf-history-search.git
+      dest: /home/mferreira/.zsh/plugins/zsh-fzf-history-search
+      clone: true
+      update: true
+  - name: Ensure golang exists
+    stat:
+      path: /home/mferreira/.local/go/bin/go
+    register: go_installed
+  - name: Golang
+    when: not go_installed
+    block:
+      - name: Download binaries
+        get_url:
+          checksum: sha256:956f8507b302ab0bb747613695cdae10af99bbd39a90cae522b7c0302cc27245
+          url: https://go.dev/dl/go1.18.3.linux-amd64.tar.gz
+          dest: /tmp/golang-tmp.tar.gz
+          mode: 0755
+      - name: Decompress
+        unarchive:
+          src: /tmp/golang-tmp.tar.gz
+          dest: /home/mferreira/.local/
+      - name: Remove
+        file:
+          path: /tmp/golang-tmp.tar.gz
+          state: absent
+  - name: Config git
+    file:
+      src: /home/mferreira/myenv/ansible/ubuntu/files/gitconfig
+      dest: /home/mferreira/.gitconfig
+      owner: mferreira
+      group: mferreira
+      state: link
