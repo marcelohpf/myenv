@@ -104,10 +104,10 @@ end)
 vim.cmd("colorscheme sonokai")
 
 -- clipboard
-vim.g.clipboard = {
-  name = 'wsl',
-  copy = { ["+"] = { "clip.exe" }, ["*"] = { "clip.exe" } },
-}
+-- vim.g.clipboard = {
+--   name = 'wsl',
+--   copy = { ["+"] = { "clip.exe" }, ["*"] = { "clip.exe" } },
+-- }
 
 local has_words_before = function()
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -180,7 +180,7 @@ require("mason").setup({
 })
 
 require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", 'tsserver', 'cssls', 'html', 'terraformls', 'pyright', 'bashls', "yamlls" },
+    ensure_installed = { "efm", "lua_ls", 'ts_ls', 'cssls', 'html', 'terraformls', 'pyright', 'bashls', "yamlls" },
 }
 
 
@@ -234,7 +234,7 @@ lspconfig['lua_ls'].setup {
   }
 }
 -- generic lsp setup
-for _, lang in pairs({ 'tsserver', 'cssls', 'html', 'terraformls', 'pyright' }) do
+for _, lang in pairs({ 'ts_ls', 'cssls', 'html', 'terraformls', 'pyright' }) do
   lspconfig[lang].setup({
     on_attach = on_attach,
     capabilities = capabilities,
