@@ -38,6 +38,8 @@ export PROMPT='%F{8}%m%f [%F{28}%~%f]$vcs_info_msg_0_
 
 # Envs
 
+export PATH="$HOME/.local/bin${PATH:+:${PATH}}"
+
 ## Python
 export PYENV_ROOT=$HOME/.local/pyenv
 export PATH="$PYENV_ROOT/bin${PATH:+:${PATH}}"

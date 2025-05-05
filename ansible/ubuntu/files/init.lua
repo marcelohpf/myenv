@@ -234,7 +234,7 @@ lspconfig['lua_ls'].setup {
   }
 }
 -- generic lsp setup
-for _, lang in pairs({ 'ts_ls', 'cssls', 'html', 'terraformls', 'pyright' }) do
+for _, lang in pairs({ 'ts_ls', 'cssls', 'html', 'terraformls', 'pyright', 'bashls' }) do
   lspconfig[lang].setup({
     on_attach = on_attach,
     capabilities = capabilities,
